@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JChat - Jchat</title>
+    <title>JChat - 私聊助手</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             background: #e5e7eb;
@@ -67,15 +63,10 @@
             border-bottom: 1px solid #e2e8f0;
             transition: 0.2s;
         }
-        .contact-item:hover {
-            background: #eef2ff;
-        }
-        .contact-item.active {
-            background: #e0e7ff;
-        }
+        .contact-item:hover { background: #eef2ff; }
+        .contact-item.active { background: #e0e7ff; }
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: #3b82f6;
             border-radius: 50%;
             display: flex;
@@ -84,17 +75,9 @@
             color: white;
             font-weight: bold;
         }
-        .contact-info {
-            flex: 1;
-        }
-        .contact-name {
-            font-weight: 500;
-        }
-        .chat-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        .contact-info { flex: 1; }
+        .contact-name { font-weight: 500; }
+        .chat-panel { flex: 1; display: flex; flex-direction: column; }
         .chat-header {
             padding: 20px;
             background: white;
@@ -161,9 +144,7 @@
             padding: 30px;
             box-shadow: 0 20px 35px -8px rgba(0,0,0,0.2);
         }
-        .auth-container h2 {
-            margin-bottom: 24px;
-        }
+        .auth-container h2 { margin-bottom: 24px; }
         .auth-container input {
             width: 100%;
             padding: 12px;
@@ -187,16 +168,8 @@
             color: #3b82f6;
             cursor: pointer;
         }
-        .error-msg {
-            color: red;
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #6b7280;
-        }
+        .error-msg { color: red; font-size: 0.8rem; margin-bottom: 12px; }
+        .loading { text-align: center; padding: 20px; color: #6b7280; }
     </style>
 </head>
 <body>
@@ -208,23 +181,18 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_36lHK24HL6drOmuhSTTv8g_w2n0fU5H';
     // -----------------------------------------------------
 
-    // 唯一初始化客户端
     const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    // 固定邮箱后缀
     const EMAIL_SUFFIX = '@jchat.local';
 
-    function usernameToEmail(username) {
-        return username.trim().toLowerCase() + EMAIL_SUFFIX;
-    }
-    function emailToUsername(email) {
-        return email.replace(EMAIL_SUFFIX, '');
+    // 生成随机邮箱（UUID 格式，确保唯一）
+    function generateRandomEmail() {
+        return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now() + EMAIL_SUFFIX;
     }
 
     let currentUser = null;
     let currentChatUser = null;
     let messagesSubscription = null;
 
-    // 渲染入口
     function render() {
         const app = document.getElementById('app');
         if (!currentUser) {
@@ -266,8 +234,19 @@
                 errorDiv.innerText = '请填写用户名和密码';
                 return;
             }
-            const email = usernameToEmail(username);
+
             if (isLogin) {
+                // 登录：先根据用户名获取邮箱
+                const { data: profile, error: findError } = await _supabase
+                    .from('public_profiles')
+                    .select('email')
+                    .eq('display_name', username)
+                    .maybeSingle();
+                if (findError || !profile) {
+                    errorDiv.innerText = '用户名不存在';
+                    return;
+                }
+                const email = profile.email;
                 const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
                 if (error) {
                     errorDiv.innerText = error.message;
@@ -277,7 +256,7 @@
                     render();
                 }
             } else {
-                // 检查用户名是否已存在
+                // 注册：检查用户名是否已被占用
                 const { data: existing, error: checkErr } = await _supabase
                     .from('public_profiles')
                     .select('id')
@@ -287,15 +266,17 @@
                     errorDiv.innerText = '用户名已被占用';
                     return;
                 }
-                const { data, error } = await _supabase.auth.signUp({ email, password });
+                // 生成随机唯一邮箱
+                const randomEmail = generateRandomEmail() + EMAIL_SUFFIX;
+                const { data, error } = await _supabase.auth.signUp({ email: randomEmail, password });
                 if (error) {
                     errorDiv.innerText = error.message;
                 } else if (data.user) {
                     currentUser = data.user;
-                    // 手动创建 profile，设置 display_name
+                    // 将用户名和生成的邮箱存入 public_profiles
                     await _supabase.from('public_profiles').upsert({
                         id: currentUser.id,
-                        email: email,
+                        email: randomEmail,
                         display_name: username
                     });
                     render();
@@ -314,20 +295,21 @@
         };
     }
 
-    async function ensureProfile(user, fallbackUsername) {
+    async function ensureProfile(user, username) {
         const { data, error } = await _supabase
             .from('public_profiles')
             .select('*')
             .eq('id', user.id)
             .maybeSingle();
         if (!data && !error) {
+            // 如果 profile 不存在（比如旧数据），则创建一个
             await _supabase.from('public_profiles').insert({
                 id: user.id,
                 email: user.email,
-                display_name: fallbackUsername || emailToUsername(user.email)
+                display_name: username
             });
         } else if (data && !data.display_name) {
-            await _supabase.from('public_profiles').update({ display_name: fallbackUsername }).eq('id', user.id);
+            await _supabase.from('public_profiles').update({ display_name: username }).eq('id', user.id);
         }
     }
 
@@ -353,7 +335,7 @@
                             <div class="contact-item" data-user-id="${contact.id}">
                                 <div class="avatar">${(contact.display_name || '?').charAt(0).toUpperCase()}</div>
                                 <div class="contact-info">
-                                    <div class="contact-name">${escapeHtml(contact.display_name || emailToUsername(contact.email))}</div>
+                                    <div class="contact-name">${escapeHtml(contact.display_name || '未知')}</div>
                                 </div>
                             </div>
                         `).join('')}
@@ -398,7 +380,7 @@
 
     function renderChatArea() {
         if (!currentChatUser) return '';
-        const displayName = currentChatUser.display_name || emailToUsername(currentChatUser.email);
+        const displayName = currentChatUser.display_name || '好友';
         return `
             <div class="chat-header">
                 与 ${escapeHtml(displayName)} 的私聊
@@ -515,7 +497,13 @@
         const { data: { session } } = await _supabase.auth.getSession();
         if (session?.user) {
             currentUser = session.user;
-            const username = emailToUsername(currentUser.email);
+            // 尝试从 profiles 中获取用户名
+            const { data: profile } = await _supabase
+                .from('public_profiles')
+                .select('display_name')
+                .eq('id', currentUser.id)
+                .maybeSingle();
+            const username = profile?.display_name || '用户';
             await ensureProfile(currentUser, username);
         }
         render();
