@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>JChat - 新一代即时聊天平台</title>
+    <title>JChat - 即时通讯</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -13,214 +13,82 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f5f7fb;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* 主页样式 */
-        .landing-page {
-            min-height: 100vh;
+        /* 登录/注册页面 */
+        .auth-page {
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 80px 24px;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 16px;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 32px;
-            opacity: 0.9;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #667eea;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid white;
-            color: white;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .features {
-            padding: 60px 24px;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 32px;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: 28px;
-            padding: 28px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: 0.2s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .feature-card h3 {
-            margin-bottom: 12px;
-            font-size: 1.4rem;
-        }
-
-        .announcement-section {
-            background: #fff7e5;
-            border-top: 1px solid #ffe5b4;
-            border-bottom: 1px solid #ffe5b4;
-            padding: 40px 24px;
-            text-align: center;
-        }
-
-        .announcement-content {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 60px;
-            padding: 16px 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            font-size: 1rem;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 32px;
-            color: #6c757d;
-            font-size: 0.8rem;
-        }
-
-        /* 模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
+        .auth-card {
             background: white;
             border-radius: 32px;
-            padding: 32px;
+            padding: 40px 32px;
             width: 90%;
             max-width: 400px;
-            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
 
-        .modal-content h2 {
-            margin-bottom: 24px;
+        .auth-card h2 {
             text-align: center;
+            margin-bottom: 28px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
-        .modal-content input {
+        .auth-card input {
             width: 100%;
-            padding: 14px;
+            padding: 14px 18px;
             margin-bottom: 16px;
             border: 1px solid #e2e8f0;
             border-radius: 60px;
-            font-size: 1rem;
+            font-size: 16px;
         }
 
-        .modal-content button {
+        .auth-card button {
             width: 100%;
             padding: 14px;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
             border-radius: 60px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 24px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #888;
-        }
-
-        .switch-auth {
+        .auth-switch {
             text-align: center;
-            margin-top: 16px;
+            margin-top: 20px;
             color: #667eea;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .error-msg {
             color: #e53e3e;
-            font-size: 0.8rem;
-            margin-bottom: 12px;
+            font-size: 13px;
             text-align: center;
+            margin-bottom: 16px;
         }
 
-        /* 应用界面（登录后） */
+        /* 主应用布局 */
         .app-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
 
         .top-nav {
@@ -249,22 +117,38 @@
             border-bottom-color: #007aff;
         }
 
+        .user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
         .main-content {
             flex: 1;
             overflow-y: auto;
             padding: 24px 28px;
         }
 
-        /* 卡片等复用之前样式 */
+        /* 卡片样式 */
         .card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 20px;
             margin-bottom: 24px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
-        .friend-item, .contact-item, .user-search-item {
+        .friend-item, .contact-item {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -281,8 +165,13 @@
             background: #e9ecef;
         }
 
-        .info { flex: 1; }
-        .name { font-weight: 600; }
+        .info {
+            flex: 1;
+        }
+
+        .name {
+            font-weight: 600;
+        }
 
         button {
             background: #007aff;
@@ -334,25 +223,23 @@
             object-fit: cover;
         }
 
-        /* 放大后的公告框样式 */
         .home-announcement {
             background: linear-gradient(135deg, #fff7e5 0%, #ffe8c7 100%);
             border-radius: 32px;
             padding: 32px 40px;
             margin-bottom: 32px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
 
-        .home-announcement .announcement-icon {
+        .home-announcement .icon {
             font-size: 48px;
             margin-bottom: 16px;
         }
 
-        .home-announcement .announcement-text {
+        .home-announcement .text {
             font-size: 1.3rem;
             line-height: 1.5;
-            color: #2d3748;
             font-weight: 500;
         }
 
@@ -365,31 +252,42 @@
             text-align: left;
             border-bottom: 1px solid #eef2f6;
         }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            margin-bottom: 12px;
+        }
+        .danger-btn {
+            background: #ef4444;
+        }
     </style>
 </head>
 <body>
 <div id="root"></div>
 
 <script>
-    // ---------- Supabase 配置 ----------
+    // ==================== Supabase 配置 ====================
     const SUPABASE_URL = 'https://cxilodvbdhtxtrldoswl.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_36lHK24HL6drOmuhSTTv8g_w2n0fU5H';
-    // ---------------------------------
+    // ======================================================
 
     const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const EMAIL_SUFFIX = '@jchat.local';
 
     let currentUser = null;
     let currentProfile = null;
-    let currentView = 'home';   // 默认主页在第一位
+    let currentView = 'home';
     let currentChatUser = null;
-    let messagesSubscription = null;
+    let messagesSub = null;
 
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
     }
 
+    // 确保用户 profile 存在
     async function ensureProfile(user, username) {
         const { data } = await _supabase.from('public_profiles').select('id').eq('id', user.id).maybeSingle();
         if (!data) {
@@ -404,100 +302,38 @@
         }
     }
 
-    // 渲染主页（未登录时）
-    async function renderLandingPage() {
-        const { data: ann } = await _supabase.from('announcements').select('content').order('created_at', { ascending: false }).limit(1);
-        const announcement = ann?.[0]?.content || '欢迎使用 JChat，一个安全、私密的即时通讯平台！';
-
+    // ==================== 认证页面 ====================
+    function renderAuth() {
         return `
-            <div class="landing-page">
-                <div class="hero">
-                    <h1>JChat</h1>
-                    <p>极速、安全、自由的即时通讯</p>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" id="open-login">登录</button>
-                        <button class="btn btn-outline" id="open-register">注册</button>
-                    </div>
-                </div>
-                <div class="announcement-section">
-                    <div class="announcement-content">
-                        📢 公告：${escapeHtml(announcement)}
-                    </div>
-                </div>
-                <div class="features">
-                    <div class="feature-card">
-                        <div class="feature-icon">💬</div>
-                        <h3>实时聊天</h3>
-                        <p>与好友即时通讯，消息秒送</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">👥</div>
-                        <h3>好友系统</h3>
-                        <p>搜索、添加、管理好友</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🔒</div>
-                        <h3>安全私密</h3>
-                        <p>数据加密，隐私保护</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🎨</div>
-                        <h3>个性主页</h3>
-                        <p>上传头像，编辑个人资料</p>
-                    </div>
-                </div>
-                <div class="footer">
-                    © 2025 JChat · 让连接更简单
+            <div class="auth-page">
+                <div class="auth-card">
+                    <h2>JChat</h2>
+                    <div id="auth-error" class="error-msg"></div>
+                    <input type="text" id="auth-username" placeholder="用户名" autocomplete="username">
+                    <input type="password" id="auth-password" placeholder="密码" autocomplete="current-password">
+                    <button id="auth-submit">登录</button>
+                    <div class="auth-switch" id="auth-switch">没有账号？立即注册</div>
                 </div>
             </div>
         `;
     }
 
-    // 登录/注册模态框（与之前相同，略）
-    function showAuthModal(isLoginMode = true) {
-        const modal = document.createElement('div');
-        modal.className = 'modal active';
-        modal.id = 'auth-modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2 id="modal-title">${isLoginMode ? '登录 JChat' : '注册 JChat'}</h2>
-                <div id="modal-error" class="error-msg"></div>
-                <input type="text" id="modal-username" placeholder="用户名" autocomplete="username">
-                <input type="password" id="modal-password" placeholder="密码" autocomplete="current-password">
-                <button id="modal-submit">${isLoginMode ? '登录' : '注册'}</button>
-                <div id="modal-switch" class="switch-auth">${isLoginMode ? '没有账号？立即注册' : '已有账号？去登录'}</div>
-            </div>
-        `;
-        document.body.appendChild(modal);
+    let authIsLogin = true;
+    function attachAuthEvents() {
+        const submit = document.getElementById('auth-submit');
+        const switchBtn = document.getElementById('auth-switch');
+        const errorDiv = document.getElementById('auth-error');
 
-        let loginMode = isLoginMode;
-
-        const closeModal = () => modal.remove();
-        modal.querySelector('.close-modal').onclick = closeModal;
-        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-
-        const updateForm = () => {
-            modal.querySelector('#modal-title').innerText = loginMode ? '登录 JChat' : '注册 JChat';
-            modal.querySelector('#modal-submit').innerText = loginMode ? '登录' : '注册';
-            modal.querySelector('#modal-switch').innerText = loginMode ? '没有账号？立即注册' : '已有账号？去登录';
-            document.getElementById('modal-error').innerText = '';
-        };
-
-        modal.querySelector('#modal-switch').onclick = () => {
-            loginMode = !loginMode;
-            updateForm();
-        };
-
-        modal.querySelector('#modal-submit').onclick = async () => {
-            const username = document.getElementById('modal-username').value.trim();
-            const password = document.getElementById('modal-password').value;
-            const errorDiv = document.getElementById('modal-error');
+        async function handleAuth() {
+            errorDiv.innerText = '';
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
             if (!username || !password) {
                 errorDiv.innerText = '请填写用户名和密码';
                 return;
             }
-            if (loginMode) {
+            if (authIsLogin) {
+                // 登录
                 const { data: profile } = await _supabase.from('public_profiles').select('email').eq('display_name', username).maybeSingle();
                 if (!profile) { errorDiv.innerText = '用户名不存在'; return; }
                 const { error } = await _supabase.auth.signInWithPassword({ email: profile.email, password });
@@ -505,9 +341,9 @@
                 const { data: { user } } = await _supabase.auth.getUser();
                 currentUser = user;
                 await ensureProfile(currentUser, username);
-                closeModal();
                 renderApp();
             } else {
+                // 注册
                 const { data: existing } = await _supabase.from('public_profiles').select('id').eq('display_name', username).maybeSingle();
                 if (existing) { errorDiv.innerText = '用户名已被占用'; return; }
                 const randomEmail = crypto.randomUUID() + EMAIL_SUFFIX;
@@ -523,85 +359,105 @@
                         is_muted: false,
                         bio: ''
                     });
-                    closeModal();
                     renderApp();
                 } else {
                     errorDiv.innerText = '注册失败';
                 }
             }
+        }
+        submit.onclick = handleAuth;
+        switchBtn.onclick = () => {
+            authIsLogin = !authIsLogin;
+            submit.innerText = authIsLogin ? '登录' : '注册';
+            switchBtn.innerText = authIsLogin ? '没有账号？立即注册' : '已有账号？去登录';
+            errorDiv.innerText = '';
         };
     }
 
-    // 应用主界面（登录后）
+    // ==================== 主应用渲染 ====================
     async function renderApp() {
         const { data: profile } = await _supabase.from('public_profiles').select('*').eq('id', currentUser.id).single();
         currentProfile = profile;
 
-        let mainContent = '';
-        if (currentView === 'home') mainContent = await renderHomeView();
-        else if (currentView === 'chat') mainContent = await renderChatView();
-        else if (currentView === 'friends') mainContent = await renderFriendsView();
-        else if (currentView === 'profile') mainContent = await renderProfileView();
-        else if (currentView === 'settings') mainContent = renderSettingsView();
-        else if (currentView === 'admin' && currentProfile?.is_admin) mainContent = await renderAdminView();
+        let mainHtml = '';
+        if (currentView === 'home') mainHtml = await renderHome();
+        else if (currentView === 'chat') mainHtml = await renderChat();
+        else if (currentView === 'friends') mainHtml = await renderFriends();
+        else if (currentView === 'profile') mainHtml = await renderMyProfile();
+        else if (currentView === 'settings') mainHtml = renderSettings();
+        else if (currentView === 'admin' && currentProfile.is_admin) mainHtml = await renderAdmin();
 
-        const topNav = `
-            <div class="top-nav">
-                <div class="nav-item ${currentView === 'home' ? 'active' : ''}" data-view="home">🏠 主页</div>
-                <div class="nav-item ${currentView === 'chat' ? 'active' : ''}" data-view="chat">💬 聊天</div>
-                <div class="nav-item ${currentView === 'friends' ? 'active' : ''}" data-view="friends">👥 好友</div>
-                <div class="nav-item ${currentView === 'profile' ? 'active' : ''}" data-view="profile">😀 我的主页</div>
-                <div class="nav-item ${currentView === 'settings' ? 'active' : ''}" data-view="settings">⚙️ 设置</div>
-                ${currentProfile?.is_admin ? `<div class="nav-item ${currentView === 'admin' ? 'active' : ''}" data-view="admin">🔧 管理</div>` : ''}
-                <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
-                    <span style="font-size:14px;">${escapeHtml(currentProfile?.display_name)}</span>
-                    <button id="logout-app" style="background:#ef4444; padding:6px 14px;">退出</button>
+        const navItems = [
+            { id: 'home', label: '🏠 主页' },
+            { id: 'chat', label: '💬 聊天' },
+            { id: 'friends', label: '👥 好友' },
+            { id: 'profile', label: '😀 我的主页' },
+            { id: 'settings', label: '⚙️ 设置' }
+        ];
+        if (currentProfile.is_admin) navItems.push({ id: 'admin', label: '🔧 管理' });
+
+        const navHtml = navItems.map(item => `
+            <div class="nav-item ${currentView === item.id ? 'active' : ''}" data-view="${item.id}">${item.label}</div>
+        `).join('');
+
+        const appHtml = `
+            <div class="app-container">
+                <div class="top-nav">
+                    ${navHtml}
+                    <div class="user-info">
+                        <span>${escapeHtml(currentProfile.display_name)}</span>
+                        <button class="logout-btn" id="logout-btn">退出</button>
+                    </div>
                 </div>
+                <div class="main-content">${mainHtml}</div>
             </div>
-            <div class="main-content">${mainContent}</div>
         `;
+        document.getElementById('root').innerHTML = appHtml;
 
-        const root = document.getElementById('root');
-        root.innerHTML = `<div class="app-container">${topNav}</div>`;
-
+        // 绑定导航
         document.querySelectorAll('.nav-item').forEach(el => {
             el.addEventListener('click', () => {
                 currentView = el.dataset.view;
                 currentChatUser = null;
+                if (messagesSub) messagesSub.unsubscribe();
                 renderApp();
             });
         });
-        document.getElementById('logout-app').onclick = async () => {
+        document.getElementById('logout-btn').onclick = async () => {
             await _supabase.auth.signOut();
             currentUser = null;
-            currentProfile = null;
-            if (messagesSubscription) messagesSubscription.unsubscribe();
+            if (messagesSub) messagesSub.unsubscribe();
             renderRoot();
         };
 
-        if (currentView === 'chat' && currentChatUser) {
+        // 子页面事件绑定
+        if (currentView === 'chat') {
             attachChatEvents();
-            subscribeToMessages();
+            subscribeMessages();
+        } else if (currentView === 'friends') {
+            attachFriendEvents();
+        } else if (currentView === 'settings') {
+            attachSettingsEvents();
+        } else if (currentView === 'admin' && currentProfile.is_admin) {
+            attachAdminEvents();
         }
-        if (currentView === 'friends') attachFriendEvents();
-        if (currentView === 'settings') attachSettingsEvents();
-        if (currentView === 'admin' && currentProfile?.is_admin) attachAdminEvents();
     }
 
-    // ========== 主页视图（仅显示公告，放大样式） ==========
-    async function renderHomeView() {
+    // ==================== 主页 ====================
+    async function renderHome() {
         const { data: ann } = await _supabase.from('announcements').select('content').order('created_at', { ascending: false }).limit(1);
-        const announcement = ann?.[0]?.content || '欢迎使用 JChat，祝你聊天愉快！';
+        const announcement = ann?.[0]?.content || '欢迎使用 JChat，一个安全私密的即时通讯平台！';
         return `
             <div class="home-announcement">
-                <div class="announcement-icon">📢</div>
-                <div class="announcement-text">${escapeHtml(announcement)}</div>
+                <div class="icon">📢</div>
+                <div class="text">${escapeHtml(announcement)}</div>
             </div>
         `;
     }
 
-    // 聊天视图（与之前相同，略）
-    async function renderChatView() {
+    // ==================== 聊天 ====================
+    async function renderChat() {
+        // 获取好友列表
         const { data: friendships } = await _supabase
             .from('friendships')
             .select('user_id, friend_id')
@@ -623,11 +479,11 @@
                 <div class="info"><div class="name">${escapeHtml(f.display_name)}</div></div>
             </div>
         `).join('');
-        const chatAreaHtml = currentChatUser ? await renderChatArea() : '<div class="card" style="text-align:center;">选择一个好友开始聊天</div>';
+        const chatArea = currentChatUser ? await renderChatArea() : '<div class="card" style="text-align:center;">选择一个好友开始聊天</div>';
         return `
             <div style="display:flex; flex-direction:column; gap:20px;">
-                <div class="card"><div style="font-weight:600; margin-bottom:12px;">好友列表</div>${friendListHtml || '<div>暂无好友</div>'}</div>
-                ${chatAreaHtml}
+                <div class="card"><div style="font-weight:600; margin-bottom:12px;">好友列表</div>${friendListHtml || '<div>暂无好友，请先去“好友”页面添加</div>'}</div>
+                ${chatArea}
             </div>
         `;
     }
@@ -667,8 +523,12 @@
             const send = async () => {
                 const content = input.value.trim();
                 if (!content || !currentChatUser) return;
-                if (currentProfile?.is_muted) { alert('你已被禁言'); return; }
-                await _supabase.from('messages').insert({ from_user_id: currentUser.id, to_user_id: currentChatUser.id, content });
+                if (currentProfile.is_muted) { alert('你已被禁言'); return; }
+                await _supabase.from('messages').insert({
+                    from_user_id: currentUser.id,
+                    to_user_id: currentChatUser.id,
+                    content
+                });
                 input.value = '';
                 const area = document.getElementById('chat-messages-area');
                 if (area) {
@@ -684,10 +544,10 @@
         }
     }
 
-    function subscribeToMessages() {
-        if (messagesSubscription) messagesSubscription.unsubscribe();
-        messagesSubscription = _supabase
-            .channel('new-message')
+    function subscribeMessages() {
+        if (messagesSub) messagesSub.unsubscribe();
+        messagesSub = _supabase
+            .channel('new-msg')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `to_user_id=eq.${currentUser.id}` }, payload => {
                 if (currentChatUser && payload.new.from_user_id === currentChatUser.id) {
                     const area = document.getElementById('chat-messages-area');
@@ -703,8 +563,9 @@
             .subscribe();
     }
 
-    // 好友视图（保持不变）
-    async function renderFriendsView() {
+    // ==================== 好友 ====================
+    async function renderFriends() {
+        // 待处理请求
         const { data: requests } = await _supabase.from('friendships').select('id, user_id').eq('friend_id', currentUser.id).eq('status', 'pending');
         let requestUsers = [];
         if (requests?.length) {
@@ -718,6 +579,7 @@
                 <button class="reject-friend" style="background:#aaa;">拒绝</button>
             </div>
         `).join('');
+        // 已有好友
         const { data: friendships } = await _supabase.from('friendships').select('user_id, friend_id').or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`).eq('status', 'accepted');
         let fids = [];
         friendships?.forEach(f => {
@@ -738,7 +600,7 @@
         return `
             <div class="card"><h3>好友请求</h3>${requestsHtml || '<div>暂无</div>'}</div>
             <div class="card"><h3>我的好友</h3>${friendsHtml || '<div>暂无好友</div>'}</div>
-            <div class="card"><h3>添加好友</h3><input id="add-friend-name" placeholder="用户名"><button id="search-add">搜索并添加</button></div>
+            <div class="card"><h3>添加好友</h3><input id="add-friend-name" placeholder="输入用户名"><button id="search-add">搜索并添加</button></div>
         `;
     }
 
@@ -765,6 +627,8 @@
                 const { data: user } = await _supabase.from('public_profiles').select('id').eq('display_name', username).maybeSingle();
                 if (!user) { alert('用户不存在'); return; }
                 if (user.id === currentUser.id) { alert('不能添加自己'); return; }
+                const { data: existing } = await _supabase.from('friendships').select('status').or(`and(user_id.eq.${currentUser.id},friend_id.eq.${user.id}),and(user_id.eq.${user.id},friend_id.eq.${currentUser.id})`).maybeSingle();
+                if (existing) { alert('已经是好友或已发送请求'); return; }
                 await _supabase.from('friendships').insert({ user_id: currentUser.id, friend_id: user.id, status: 'pending' });
                 alert('好友申请已发送');
                 renderApp();
@@ -772,9 +636,8 @@
         }
     }
 
-    // 个人主页视图
-    async function renderProfileView() {
-        if (!currentProfile) return '<div>加载中</div>';
+    // ==================== 我的主页 ====================
+    async function renderMyProfile() {
         return `
             <div class="card">
                 <div class="profile-header">
@@ -782,23 +645,23 @@
                     <div>
                         <div style="font-size:26px; font-weight:600;">${escapeHtml(currentProfile.display_name)}</div>
                         <div>${currentProfile.is_admin ? '管理员' : '普通用户'}</div>
+                        ${currentProfile.is_muted ? '<div style="color:red;">⛔ 禁言中</div>' : ''}
                     </div>
                 </div>
-                <div><strong>简介</strong><br>${escapeHtml(currentProfile.bio || '这个人很懒')}</div>
-                <div style="margin-top:12px;"><strong>加入时间</strong><br>${new Date(currentProfile.created_at).toLocaleDateString()}</div>
-                ${currentProfile.is_muted ? '<div style="color:red;">⛔ 禁言中</div>' : ''}
+                <div><strong>简介</strong><br>${escapeHtml(currentProfile.bio || '这个人很懒，什么都没写')}</div>
+                <div><strong>加入时间</strong><br>${new Date(currentProfile.created_at).toLocaleDateString()}</div>
             </div>
         `;
     }
 
-    // 设置页面
-    function renderSettingsView() {
+    // ==================== 设置 ====================
+    function renderSettings() {
         return `
-            <div class="card"><h3>更改昵称</h3><input id="new-name" value="${escapeHtml(currentProfile?.display_name || '')}"><button id="update-name">保存</button></div>
+            <div class="card"><h3>更改昵称</h3><input id="new-name" value="${escapeHtml(currentProfile.display_name)}"><button id="update-name">保存</button></div>
             <div class="card"><h3>修改密码</h3><input type="password" id="old-pwd" placeholder="当前密码"><input type="password" id="new-pwd" placeholder="新密码"><button id="update-pwd">更新密码</button></div>
-            <div class="card"><h3>个人简介</h3><textarea id="bio-text" rows="2">${escapeHtml(currentProfile?.bio || '')}</textarea><button id="update-bio">保存简介</button></div>
+            <div class="card"><h3>个人简介</h3><textarea id="bio-text" rows="2">${escapeHtml(currentProfile.bio || '')}</textarea><button id="update-bio">保存简介</button></div>
             <div class="card"><h3>上传头像</h3><input type="file" id="avatar-file" accept="image/*"><button id="upload-avatar">上传</button></div>
-            <div class="card"><h3>危险区域</h3><button id="delete-account" class="danger" style="background:#ef4444;">永久删除账户</button></div>
+            <div class="card"><h3>危险区域</h3><button id="delete-account" class="danger-btn">永久删除账户</button></div>
         `;
     }
 
@@ -845,8 +708,8 @@
         });
     }
 
-    // 管理员面板
-    async function renderAdminView() {
+    // ==================== 管理面板 ====================
+    async function renderAdmin() {
         const { data: users } = await _supabase.from('public_profiles').select('*').is('deleted_at', null);
         const { data: ann } = await _supabase.from('announcements').select('content').order('created_at', { ascending: false }).limit(1);
         const currentAnn = ann?.[0]?.content || '';
@@ -866,6 +729,7 @@
     }
 
     function attachAdminEvents() {
+        // 保存公告
         document.getElementById('save-announcement')?.addEventListener('click', async () => {
             const content = document.getElementById('admin-announcement').value;
             if (!content) return;
@@ -874,30 +738,60 @@
             alert('公告已更新');
             renderApp();
         });
+        // 设为管理员
         document.querySelectorAll('.set-admin').forEach(btn => {
-            btn.onclick = async () => { await _supabase.from('public_profiles').update({ is_admin: true }).eq('id', btn.dataset.id); renderApp(); };
+            btn.onclick = async () => {
+                const userId = btn.dataset.id;
+                const { error } = await _supabase.from('public_profiles').update({ is_admin: true }).eq('id', userId);
+                if (error) alert('操作失败: ' + error.message);
+                else { alert('已设为管理员'); renderApp(); }
+            };
         });
+        // 禁言/解除禁言
         document.querySelectorAll('.toggle-mute').forEach(btn => {
-            btn.onclick = async () => { await _supabase.from('public_profiles').update({ is_muted: true }).eq('id', btn.dataset.id); renderApp(); };
+            btn.onclick = async () => {
+                const userId = btn.dataset.id;
+                const { data: user } = await _supabase.from('public_profiles').select('is_muted').eq('id', userId).single();
+                const newMuted = !user.is_muted;
+                const { error } = await _supabase.from('public_profiles').update({ is_muted: newMuted }).eq('id', userId);
+                if (error) alert('操作失败: ' + error.message);
+                else { alert(newMuted ? '已禁言' : '已解除禁言'); renderApp(); }
+            };
         });
+        // 删除用户
         document.querySelectorAll('.admin-del').forEach(btn => {
-            btn.onclick = async () => { await _supabase.from('public_profiles').update({ deleted_at: new Date().toISOString() }).eq('id', btn.dataset.id); renderApp(); };
+            btn.onclick = async () => {
+                if (!confirm('确定删除该用户？')) return;
+                const userId = btn.dataset.id;
+                const { error } = await _supabase.from('public_profiles').update({ deleted_at: new Date().toISOString() }).eq('id', userId);
+                if (error) alert('删除失败: ' + error.message);
+                else { alert('用户已删除'); renderApp(); }
+            };
         });
+        // 创建用户
         document.getElementById('admin-create-user')?.addEventListener('click', async () => {
             const username = document.getElementById('new-admin-name').value.trim();
             const pwd = document.getElementById('new-admin-pwd').value;
-            if (!username || !pwd) return;
+            if (!username || !pwd) { alert('请填写用户名和密码'); return; }
             const randomEmail = crypto.randomUUID() + EMAIL_SUFFIX;
             const { data, error } = await _supabase.auth.signUp({ email: randomEmail, password: pwd });
-            if (error) { alert(error.message); return; }
+            if (error) { alert('创建失败: ' + error.message); return; }
             if (data.user) {
-                await _supabase.from('public_profiles').insert({ id: data.user.id, email: randomEmail, display_name: username });
-                alert('创建成功');
+                await _supabase.from('public_profiles').insert({
+                    id: data.user.id,
+                    email: randomEmail,
+                    display_name: username,
+                    is_admin: false,
+                    is_muted: false,
+                    bio: ''
+                });
+                alert('用户创建成功');
                 renderApp();
             }
         });
     }
 
+    // ==================== 根路由 ====================
     async function renderRoot() {
         const { data: { session } } = await _supabase.auth.getSession();
         if (session?.user) {
@@ -906,10 +800,8 @@
             await ensureProfile(currentUser, profile?.display_name || 'user');
             renderApp();
         } else {
-            const landingHtml = await renderLandingPage();
-            document.getElementById('root').innerHTML = landingHtml;
-            document.getElementById('open-login')?.addEventListener('click', () => showAuthModal(true));
-            document.getElementById('open-register')?.addEventListener('click', () => showAuthModal(false));
+            document.getElementById('root').innerHTML = renderAuth();
+            attachAuthEvents();
         }
     }
 
