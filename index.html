@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>JChat</title>
+    <title>JChat - 电脑版</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -11,14 +11,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #f5f7fb;
             height: 100vh;
             overflow: hidden;
         }
-
         /* 登录页面 */
         .auth-page {
             height: 100vh;
@@ -34,52 +32,17 @@
             width: 360px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
-        .auth-card h2 {
-            text-align: center;
-            margin-bottom: 24px;
-            font-size: 28px;
-            font-weight: 600;
-        }
-        .auth-card input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        .auth-card button {
-            width: 100%;
-            padding: 12px;
-            background: #007aff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        .auth-switch {
-            text-align: center;
-            margin-top: 16px;
-            color: #007aff;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .error-msg {
-            color: #e53e3e;
-            font-size: 13px;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
+        .auth-card h2 { text-align: center; margin-bottom: 24px; font-size: 28px; font-weight: 600; }
+        .auth-card input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
+        .auth-card button { width: 100%; padding: 12px; background: #007aff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; }
+        .auth-switch { text-align: center; margin-top: 16px; color: #007aff; cursor: pointer; font-size: 14px; }
+        .error-msg { color: #e53e3e; font-size: 13px; text-align: center; margin-bottom: 16px; }
         /* 主应用布局 (电脑微信样式) */
         .app-container {
             display: flex;
             height: 100vh;
             background: #fff;
         }
-        /* 左侧联系人列表 */
         .sidebar {
             width: 280px;
             background: #f9fafb;
@@ -96,20 +59,9 @@
             align-items: center;
             font-weight: 600;
         }
-        .sidebar-header span {
-            font-size: 18px;
-        }
-        .logout-btn {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .contact-list {
-            flex: 1;
-            overflow-y: auto;
-        }
+        .sidebar-header span { font-size: 18px; }
+        .logout-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; }
+        .contact-list { flex: 1; overflow-y: auto; }
         .contact-item {
             display: flex;
             align-items: center;
@@ -119,15 +71,10 @@
             transition: background 0.2s;
             border-bottom: 1px solid #f0f0f0;
         }
-        .contact-item:hover {
-            background: #eef2ff;
-        }
-        .contact-item.active {
-            background: #e0e7ff;
-        }
+        .contact-item:hover { background: #eef2ff; }
+        .contact-item.active { background: #e0e7ff; }
         .avatar-circle {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             background: #667eea;
             display: flex;
@@ -138,14 +85,8 @@
             font-size: 16px;
             flex-shrink: 0;
         }
-        .contact-info {
-            flex: 1;
-        }
-        .contact-name {
-            font-weight: 500;
-            font-size: 15px;
-        }
-        /* 右侧聊天区域 */
+        .contact-info { flex: 1; }
+        .contact-name { font-weight: 500; font-size: 15px; }
         .chat-area {
             flex: 1;
             display: flex;
@@ -174,16 +115,8 @@
             font-size: 14px;
             word-wrap: break-word;
         }
-        .message.sent {
-            align-self: flex-end;
-            background: #007aff;
-            color: white;
-        }
-        .message.received {
-            align-self: flex-start;
-            background: #f1f3f4;
-            color: #1f2937;
-        }
+        .message.sent { align-self: flex-end; background: #007aff; color: white; }
+        .message.received { align-self: flex-start; background: #f1f3f4; color: #1f2937; }
         .input-area {
             padding: 16px 24px;
             background: white;
@@ -191,22 +124,9 @@
             display: flex;
             gap: 12px;
         }
-        #chat-input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            outline: none;
-        }
-        #chat-send {
-            background: #007aff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-        }
-        /* 其他页面卡片样式 */
+        #chat-input { flex: 1; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 20px; outline: none; }
+        #chat-send { background: #007aff; border: none; padding: 8px 20px; border-radius: 20px; color: white; cursor: pointer; }
+        /* 其他页面样式 */
         .card {
             background: white;
             border-radius: 16px;
@@ -214,29 +134,10 @@
             margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        button {
-            background: #007aff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-        }
-        .danger-btn {
-            background: #ef4444;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .main-content {
-            padding: 24px;
-            overflow-y: auto;
-            height: 100%;
-        }
+        button { background: #007aff; border: none; padding: 8px 16px; border-radius: 8px; color: white; cursor: pointer; }
+        .danger-btn { background: #ef4444; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; }
+        .main-content { padding: 24px; overflow-y: auto; height: 100%; }
         .top-nav {
             display: flex;
             gap: 20px;
@@ -244,39 +145,14 @@
             padding: 0 24px;
             background: white;
         }
-        .nav-item {
-            padding: 12px 0;
-            cursor: pointer;
-            color: #5b677b;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-item.active {
-            color: #007aff;
-            border-bottom-color: #007aff;
-        }
-        .user-info {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eef2f6;
-        }
-        .profile-header {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-        }
+        .nav-item { padding: 12px 0; cursor: pointer; color: #5b677b; border-bottom: 2px solid transparent; }
+        .nav-item.active { color: #007aff; border-bottom-color: #007aff; }
+        .user-info { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eef2f6; }
+        .profile-header { display: flex; gap: 24px; align-items: center; }
         .profile-avatar-lg {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             border-radius: 50%;
             background: #667eea;
             display: flex;
@@ -292,17 +168,16 @@
 <div id="root"></div>
 
 <script>
-    // ==================== Supabase 配置 ====================
+    // Supabase 配置
     const SUPABASE_URL = 'https://cxilodvbdhtxtrldoswl.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_36lHK24HL6drOmuhSTTv8g_w2n0fU5H';
-    // ======================================================
 
     const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const EMAIL_SUFFIX = '@jchat.local';
 
     let currentUser = null;
     let currentProfile = null;
-    let currentView = 'home';    // home, chat, friends, profile, settings, admin
+    let currentView = 'chat';    // home, friends, profile, settings, admin, chat
     let currentChatUser = null;
     let messagesSub = null;
 
@@ -315,7 +190,6 @@
         return name ? name.charAt(0).toUpperCase() : '?';
     }
 
-    // 确保用户 profile 存在
     async function ensureProfile(user, username) {
         const { error } = await _supabase
             .from('public_profiles')
@@ -331,7 +205,6 @@
         if (error && error.code !== '23505') console.warn('ensureProfile:', error);
     }
 
-    // 获取 profile（带重试）
     async function fetchCurrentProfile(retries = 10, delay = 500) {
         if (!currentUser) throw new Error('No current user');
         for (let i = 0; i < retries; i++) {
@@ -355,7 +228,7 @@
         throw new Error('无法获取用户资料');
     }
 
-    // ========== 认证界面 ==========
+    // 认证界面
     function renderAuth() {
         return `
             <div class="auth-page">
@@ -436,108 +309,9 @@
         };
     }
 
-    // ========== 主应用渲染 ==========
-    async function renderApp() {
-        if (!currentProfile) {
-            try {
-                currentProfile = await fetchCurrentProfile();
-            } catch (err) {
-                document.getElementById('root').innerHTML = '<div style="text-align:center;padding:40px;">加载失败，请刷新</div>';
-                return;
-            }
-        }
-
-        // 构建顶部导航（用于切换非聊天页面）
-        const navItems = [
-            { id: 'home', label: '主页' },
-            { id: 'friends', label: '好友' },
-            { id: 'profile', label: '我的主页' },
-            { id: 'settings', label: '设置' }
-        ];
-        if (currentProfile.is_admin) navItems.push({ id: 'admin', label: '管理' });
-
-        const topNavHtml = `
-            <div class="top-nav">
-                ${navItems.map(item => `
-                    <div class="nav-item ${currentView === item.id ? 'active' : ''}" data-view="${item.id}">${item.label}</div>
-                `).join('')}
-                <div class="user-info">
-                    <span>${escapeHtml(currentProfile.display_name)}</span>
-                    <button class="logout-btn" id="logout-btn">退出</button>
-                </div>
-            </div>
-        `;
-
-        let mainHtml = '';
-        if (currentView === 'home') mainHtml = await renderHome();
-        else if (currentView === 'friends') mainHtml = await renderFriends();
-        else if (currentView === 'profile') mainHtml = await renderMyProfile();
-        else if (currentView === 'settings') mainHtml = renderSettings();
-        else if (currentView === 'admin' && currentProfile.is_admin) mainHtml = await renderAdmin();
-        else if (currentView === 'chat') {
-            // 聊天视图专用布局（电脑微信样式）
-            mainHtml = await renderChatLayout();
-        } else {
-            mainHtml = '<div>未知页面</div>';
-        }
-
-        const fullHtml = `
-            <div class="app-container">
-                <div class="sidebar">
-                    <div class="sidebar-header">
-                        <span>JChat</span>
-                        <button class="logout-btn" id="sidebar-logout">退出</button>
-                    </div>
-                    <div class="contact-list" id="contact-list">
-                        <!-- 好友列表会动态填充 -->
-                    </div>
-                </div>
-                <div class="chat-area" id="chat-area">
-                    <!-- 聊天区域 -->
-                </div>
-            </div>
-        `;
-
-        // 如果当前视图是聊天，使用聊天布局；否则使用普通布局（顶部导航+内容）
-        if (currentView === 'chat') {
-            document.getElementById('root').innerHTML = fullHtml;
-            await loadContactsAndChat();
-            // 绑定侧边栏退出
-            document.getElementById('sidebar-logout').onclick = async () => {
-                await _supabase.auth.signOut();
-                currentUser = null;
-                currentProfile = null;
-                if (messagesSub) messagesSub.unsubscribe();
-                renderRoot();
-            };
-        } else {
-            document.getElementById('root').innerHTML = topNavHtml + `<div class="main-content">${mainHtml}</div>`;
-            // 绑定顶部导航事件
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.addEventListener('click', () => {
-                    currentView = el.dataset.view;
-                    currentChatUser = null;
-                    if (messagesSub) messagesSub.unsubscribe();
-                    renderApp();
-                });
-            });
-            document.getElementById('logout-btn').onclick = async () => {
-                await _supabase.auth.signOut();
-                currentUser = null;
-                currentProfile = null;
-                if (messagesSub) messagesSub.unsubscribe();
-                renderRoot();
-            };
-            // 子页面事件
-            if (currentView === 'friends') attachFriendEvents();
-            if (currentView === 'settings') attachSettingsEvents();
-            if (currentView === 'admin' && currentProfile.is_admin) attachAdminEvents();
-        }
-    }
-
-    // ========== 聊天布局逻辑 ==========
-    async function loadContactsAndChat() {
-        // 加载好友列表（排除已删除的用户）
+    // ========== 聊天视图渲染函数 ==========
+    async function renderChatLayout() {
+        // 构建左侧好友列表
         const { data: friendships } = await _supabase
             .from('friendships')
             .select('user_id, friend_id')
@@ -554,7 +328,7 @@
                 .from('public_profiles')
                 .select('id, display_name')
                 .in('id', friendIds)
-                .is('deleted_at', null);   // 只显示未被删除的用户
+                .is('deleted_at', null);
             friends = data || [];
         }
         const contactListHtml = friends.map(f => `
@@ -567,20 +341,19 @@
         `).join('');
         document.getElementById('contact-list').innerHTML = contactListHtml || '<div style="padding:20px;text-align:center;">暂无好友，请去“好友”页面添加</div>';
 
-        // 绑定联系人点击
+        // 绑定联系人点击事件
         document.querySelectorAll('.contact-item').forEach(el => {
             el.addEventListener('click', async () => {
                 const userId = el.dataset.userId;
                 const name = el.dataset.name;
                 currentChatUser = { id: userId, display_name: name };
                 await renderChatArea();
-                // 高亮当前选中
                 document.querySelectorAll('.contact-item').forEach(c => c.classList.remove('active'));
                 el.classList.add('active');
             });
         });
 
-        // 如果有上次聊天对象，自动选中并加载消息
+        // 如果已有选中的聊天对象
         if (currentChatUser) {
             const activeEl = Array.from(document.querySelectorAll('.contact-item')).find(el => el.dataset.userId === currentChatUser.id);
             if (activeEl) activeEl.classList.add('active');
@@ -589,7 +362,7 @@
             document.getElementById('chat-area').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;">选择一个好友开始聊天</div>';
         }
 
-        // 实时消息订阅
+        // 订阅新消息
         if (messagesSub) messagesSub.unsubscribe();
         messagesSub = _supabase
             .channel('new-msg')
@@ -610,7 +383,6 @@
 
     async function renderChatArea() {
         if (!currentChatUser) return;
-        // 加载历史消息
         const { data: messages } = await _supabase
             .from('messages')
             .select('*')
@@ -627,11 +399,11 @@
                 <button id="chat-send">发送</button>
             </div>
         `;
-        document.getElementById('chat-area').innerHTML = chatHtml;
+        const chatAreaDiv = document.getElementById('chat-area');
+        if (chatAreaDiv) chatAreaDiv.innerHTML = chatHtml;
         const container = document.getElementById('messages-container');
         if (container) container.scrollTop = container.scrollHeight;
 
-        // 绑定发送事件
         const sendBtn = document.getElementById('chat-send');
         const input = document.getElementById('chat-input');
         if (sendBtn && input) {
@@ -645,19 +417,21 @@
                     content
                 });
                 input.value = '';
-                // 乐观更新
-                const div = document.createElement('div');
-                div.className = 'message sent';
-                div.innerText = content;
-                container.appendChild(div);
-                container.scrollTop = container.scrollHeight;
+                const container2 = document.getElementById('messages-container');
+                if (container2) {
+                    const div = document.createElement('div');
+                    div.className = 'message sent';
+                    div.innerText = content;
+                    container2.appendChild(div);
+                    container2.scrollTop = container2.scrollHeight;
+                }
             };
             sendBtn.onclick = send;
             input.onkeypress = e => { if (e.key === 'Enter') send(); };
         }
     }
 
-    // ========== 其他页面（简化但完整） ==========
+    // 其他页面渲染（主页、好友、个人主页、设置、管理）
     async function renderHome() {
         const { data: ann } = await _supabase.from('announcements').select('content').order('created_at', { ascending: false }).limit(1);
         const announcement = ann?.[0]?.content || '欢迎使用 JChat！';
@@ -665,7 +439,6 @@
     }
 
     async function renderFriends() {
-        // 好友请求
         const { data: requests } = await _supabase.from('friendships').select('id, user_id').eq('friend_id', currentUser.id).eq('status', 'pending');
         let requestUsers = [];
         if (requests?.length) {
@@ -678,7 +451,6 @@
                 <div><button class="accept-friend">接受</button> <button class="reject-friend" style="background:#aaa;">拒绝</button></div>
             </div>
         `).join('');
-        // 已有好友
         const { data: friendships } = await _supabase.from('friendships').select('user_id, friend_id').or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`).eq('status', 'accepted');
         let fids = [];
         friendships?.forEach(f => {
@@ -771,7 +543,6 @@
             if (error) alert(error.message);
             else {
                 alert('密码已修改，请重新登录');
-                // 退出并跳转登录页
                 await _supabase.auth.signOut();
                 currentUser = null;
                 currentProfile = null;
@@ -859,9 +630,7 @@
             btn.onclick = async () => {
                 if (!confirm('确定删除该用户？')) return;
                 const userId = btn.dataset.id;
-                // 软删除 profile
                 await _supabase.from('public_profiles').update({ deleted_at: new Date().toISOString() }).eq('id', userId);
-                // 可选：删除好友关系（避免残留）
                 await _supabase.from('friendships').delete().or(`user_id.eq.${userId},friend_id.eq.${userId}`);
                 alert('用户已删除');
                 renderApp();
@@ -889,14 +658,97 @@
         });
     }
 
-    // ========== 根路由 ==========
+    // 主渲染分发
+    async function renderApp() {
+        if (!currentProfile) {
+            try {
+                currentProfile = await fetchCurrentProfile();
+            } catch (err) {
+                document.getElementById('root').innerHTML = '<div style="text-align:center;padding:40px;">加载失败，请刷新</div>';
+                return;
+            }
+        }
+
+        // 聊天视图使用专门的微信风格布局
+        if (currentView === 'chat') {
+            const layoutHtml = `
+                <div class="app-container">
+                    <div class="sidebar">
+                        <div class="sidebar-header">
+                            <span>JChat</span>
+                            <button class="logout-btn" id="sidebar-logout">退出</button>
+                        </div>
+                        <div class="contact-list" id="contact-list"></div>
+                    </div>
+                    <div class="chat-area" id="chat-area"></div>
+                </div>
+            `;
+            document.getElementById('root').innerHTML = layoutHtml;
+            document.getElementById('sidebar-logout').onclick = async () => {
+                await _supabase.auth.signOut();
+                currentUser = null;
+                currentProfile = null;
+                if (messagesSub) messagesSub.unsubscribe();
+                renderRoot();
+            };
+            await renderChatLayout();
+            return;
+        }
+
+        // 其他视图（顶部导航）
+        const navItems = [
+            { id: 'home', label: '主页' },
+            { id: 'friends', label: '好友' },
+            { id: 'profile', label: '我的主页' },
+            { id: 'settings', label: '设置' }
+        ];
+        if (currentProfile.is_admin) navItems.push({ id: 'admin', label: '管理' });
+
+        const topNavHtml = `
+            <div class="top-nav">
+                ${navItems.map(item => `<div class="nav-item ${currentView === item.id ? 'active' : ''}" data-view="${item.id}">${item.label}</div>`).join('')}
+                <div class="user-info">
+                    <span>${escapeHtml(currentProfile.display_name)}</span>
+                    <button class="logout-btn" id="logout-btn">退出</button>
+                </div>
+            </div>
+        `;
+        let mainContent = '';
+        if (currentView === 'home') mainContent = await renderHome();
+        else if (currentView === 'friends') mainContent = await renderFriends();
+        else if (currentView === 'profile') mainContent = await renderMyProfile();
+        else if (currentView === 'settings') mainContent = renderSettings();
+        else if (currentView === 'admin' && currentProfile.is_admin) mainContent = await renderAdmin();
+
+        document.getElementById('root').innerHTML = topNavHtml + `<div class="main-content">${mainContent}</div>`;
+
+        // 绑定导航事件
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.addEventListener('click', () => {
+                currentView = el.dataset.view;
+                currentChatUser = null;
+                if (messagesSub) messagesSub.unsubscribe();
+                renderApp();
+            });
+        });
+        document.getElementById('logout-btn').onclick = async () => {
+            await _supabase.auth.signOut();
+            currentUser = null;
+            currentProfile = null;
+            if (messagesSub) messagesSub.unsubscribe();
+            renderRoot();
+        };
+        if (currentView === 'friends') attachFriendEvents();
+        if (currentView === 'settings') attachSettingsEvents();
+        if (currentView === 'admin' && currentProfile.is_admin) attachAdminEvents();
+    }
+
     async function renderRoot() {
         const { data: { session } } = await _supabase.auth.getSession();
         if (session?.user) {
             currentUser = session.user;
             try {
                 currentProfile = await fetchCurrentProfile();
-                // 默认进入聊天视图
                 currentView = 'chat';
                 renderApp();
             } catch (err) {
