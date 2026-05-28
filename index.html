@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>JChat</title>
+    <title>JChat - 电脑版</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -21,7 +21,7 @@
         }
         /* 登录页面 */
         .auth-page {
-            height: 100vh;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -72,11 +72,11 @@
             text-align: center;
             margin-bottom: 16px;
         }
-        /* 主应用布局 */
-        .app-container {
+        /* 主应用布局 - 使用 Grid 确保高度 */
+        .app-root {
+            height: 100%;
             display: flex;
             flex-direction: column;
-            height: 100vh;
         }
         /* 顶部导航栏 */
         .top-nav {
@@ -116,29 +116,29 @@
             color: white;
             cursor: pointer;
         }
-        /* 内容区域 - 作为 flex 容器，内部聊天视图需要撑满 */
+        /* 内容区域 - 占满剩余高度 */
         .main-content {
             flex: 1;
+            overflow: hidden;  /* 防止溢出 */
+            background: #fff;
             display: flex;
             flex-direction: column;
-            overflow: hidden;  /* 确保不会溢出，内部滚动 */
-            background: #fff;
-            padding: 0;        /* 聊天视图完全撑满 */
         }
-        /* 聊天布局 (电脑微信样式) - 必须占满整个 main-content */
+        /* 聊天布局 - 使用 Grid 左右分栏 */
         .chat-layout {
-            display: flex;
-            flex: 1;
-            min-height: 0;      /* 重要：允许 flex 子项收缩 */
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100%;
             width: 100%;
         }
+        /* 左侧好友列表 */
         .chat-sidebar {
-            width: 280px;
             background: #f9fafb;
             border-right: 1px solid #eef2f6;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
+            height: 100%;
+            overflow: hidden;
         }
         .chat-sidebar-header {
             padding: 16px 20px;
@@ -150,7 +150,6 @@
         .contact-list {
             flex: 1;
             overflow-y: auto;
-            min-height: 0;
         }
         .contact-item {
             display: flex;
@@ -187,12 +186,13 @@
             font-weight: 500;
             font-size: 15px;
         }
+        /* 右侧聊天区域 */
         .chat-area {
-            flex: 1;
+            background: white;
             display: flex;
             flex-direction: column;
-            background: white;
-            min-height: 0;      /* 允许收缩，使内部滚动有效 */
+            height: 100%;
+            overflow: hidden;
         }
         .chat-header {
             padding: 16px 24px;
@@ -209,7 +209,6 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            min-height: 0;
         }
         .message {
             max-width: 70%;
@@ -251,7 +250,7 @@
             color: white;
             cursor: pointer;
         }
-        /* 其他页面卡片样式（非聊天视图） */
+        /* 其他页面卡片样式 */
         .card {
             background: white;
             border-radius: 16px;
@@ -325,7 +324,7 @@
 
     let currentUser = null;
     let currentProfile = null;
-    let currentView = 'home';    // home, chat, friends, profile, settings, admin
+    let currentView = 'home';
     let currentChatUser = null;
     let messagesSub = null;
 
@@ -338,7 +337,6 @@
         return name ? name.charAt(0).toUpperCase() : '?';
     }
 
-    // 确保用户 profile 存在
     async function ensureProfile(user, username) {
         const { error } = await _supabase
             .from('public_profiles')
@@ -354,7 +352,6 @@
         if (error && error.code !== '23505') console.warn('ensureProfile:', error);
     }
 
-    // 获取 profile（带重试）
     async function fetchCurrentProfile(retries = 10, delay = 500) {
         if (!currentUser) throw new Error('No current user');
         for (let i = 0; i < retries; i++) {
@@ -470,7 +467,6 @@
             }
         }
 
-        // 顶部导航栏项目
         const navItems = [
             { id: 'home', label: '🏠 主页' },
             { id: 'chat', label: '💬 聊天' },
@@ -500,9 +496,8 @@
         else if (currentView === 'settings') mainHtml = renderSettings();
         else if (currentView === 'admin' && currentProfile.is_admin) mainHtml = await renderAdmin();
 
-        document.getElementById('root').innerHTML = topNavHtml + `<div class="main-content">${mainHtml}</div>`;
+        document.getElementById('root').innerHTML = `<div class="app-root">${topNavHtml}<div class="main-content">${mainHtml}</div></div>`;
 
-        // 绑定导航事件
         document.querySelectorAll('.nav-item').forEach(el => {
             el.addEventListener('click', () => {
                 currentView = el.dataset.view;
@@ -519,7 +514,6 @@
             renderRoot();
         };
 
-        // 子页面事件绑定
         if (currentView === 'chat') {
             attachChatEvents();
             subscribeMessages();
@@ -532,9 +526,8 @@
         }
     }
 
-    // ========== 聊天视图（电脑微信样式，全屏） ==========
+    // ========== 聊天视图 ==========
     async function renderChatView() {
-        // 返回聊天布局的 HTML，没有外层边距，直接撑满 .main-content
         return `
             <div class="chat-layout">
                 <div class="chat-sidebar">
@@ -549,7 +542,6 @@
     }
 
     async function loadContactsAndChat() {
-        // 加载好友列表（排除已删除的用户）
         const { data: friendships } = await _supabase
             .from('friendships')
             .select('user_id, friend_id')
@@ -581,20 +573,17 @@
             `).join('') || '<div style="padding:20px;text-align:center;">暂无好友，请去“好友”页面添加</div>';
         }
 
-        // 绑定联系人点击
         document.querySelectorAll('.contact-item').forEach(el => {
             el.addEventListener('click', async () => {
                 const userId = el.dataset.userId;
                 const name = el.dataset.name;
                 currentChatUser = { id: userId, display_name: name };
                 await renderChatAreaContent();
-                // 高亮当前选中
                 document.querySelectorAll('.contact-item').forEach(c => c.classList.remove('active'));
                 el.classList.add('active');
             });
         });
 
-        // 如果有上次聊天对象，自动选中并加载消息
         if (currentChatUser) {
             const activeEl = Array.from(document.querySelectorAll('.contact-item')).find(el => el.dataset.userId === currentChatUser.id);
             if (activeEl) activeEl.classList.add('active');
@@ -604,7 +593,6 @@
             if (chatArea) chatArea.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;">选择一个好友开始聊天</div>';
         }
 
-        // 实时消息订阅
         if (messagesSub) messagesSub.unsubscribe();
         messagesSub = _supabase
             .channel('new-msg')
@@ -625,7 +613,6 @@
 
     async function renderChatAreaContent() {
         if (!currentChatUser) return;
-        // 加载历史消息
         const { data: messages } = await _supabase
             .from('messages')
             .select('*')
@@ -648,7 +635,6 @@
             const container = document.getElementById('messages-container');
             if (container) container.scrollTop = container.scrollHeight;
         }
-        // 绑定发送事件
         const sendBtn = document.getElementById('chat-send');
         const input = document.getElementById('chat-input');
         if (sendBtn && input) {
@@ -677,15 +663,12 @@
     }
 
     function attachChatEvents() {
-        // 等待 DOM 渲染完成后加载联系人
         setTimeout(() => {
             loadContactsAndChat();
         }, 100);
     }
 
-    function subscribeMessages() {
-        // 已经在 loadContactsAndChat 中订阅
-    }
+    function subscribeMessages() { }
 
     // ========== 主页 ==========
     async function renderHome() {
@@ -696,7 +679,6 @@
 
     // ========== 好友页面 ==========
     async function renderFriends() {
-        // 好友请求
         const { data: requests } = await _supabase.from('friendships').select('id, user_id').eq('friend_id', currentUser.id).eq('status', 'pending');
         let requestUsers = [];
         if (requests?.length) {
@@ -709,7 +691,6 @@
                 <div><button class="accept-friend">接受</button> <button class="reject-friend" style="background:#aaa;">拒绝</button></div>
             </div>
         `).join('');
-        // 已有好友
         const { data: friendships } = await _supabase.from('friendships').select('user_id, friend_id').or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`).eq('status', 'accepted');
         let fids = [];
         friendships?.forEach(f => {
@@ -930,7 +911,7 @@
             currentUser = session.user;
             try {
                 currentProfile = await fetchCurrentProfile();
-                currentView = 'home';   // 默认进入主页
+                currentView = 'home';
                 renderApp();
             } catch (err) {
                 console.error(err);
